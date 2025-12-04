@@ -75,33 +75,32 @@ function Dashboard() {
   };
 
   return (
-    <div className="text-white">
-      <h1 className="text-2xl font-bold mb-6">Panel de Control</h1>
+    <div className="text-white" style={{ backgroundColor: '#111827', minHeight: '100vh', padding: '2rem' }}>
+      <h1 className="text-3xl font-bold mb-6 text-white">Panel de Control</h1>
 
       {/* SECCIÓN DE ESTADO DEL RESTAURANTE */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         
         {/* Tarjeta de Estado del Turno */}
-        <div className={`p-6 rounded-2xl border-2 flex flex-col justify-between transition-colors shadow-2xl ${
-          turno === 'abierto' 
-            ? 'bg-green-900/20 border-green-500/50 shadow-green-900/20' 
-            : 'bg-red-900/20 border-red-500/50 shadow-red-900/20'
-        }`}>
+        <div className={`p-6 rounded-2xl border-2 flex flex-col justify-between transition-colors shadow-2xl`} style={{
+          backgroundColor: 'rgba(166, 40, 88, 0.1)',
+          borderColor: '#a62858'
+        }}>
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-200">Estado del Restaurante</h2>
+              <h2 className="text-lg font-semibold text-white">Estado del Restaurante</h2>
               {turno === 'abierto' ? (
-                <span className="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full flex items-center gap-1 animate-pulse">
+                <span className="px-3 py-1 text-white text-xs font-bold rounded-full flex items-center gap-1 animate-pulse" style={{ backgroundColor: '#a62858' }}>
                   <CheckCircle2 className="w-3 h-3" /> OPERATIVO
                 </span>
               ) : (
-                <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full flex items-center gap-1">
+                <span className="px-3 py-1 text-white text-xs font-bold rounded-full flex items-center gap-1" style={{ backgroundColor: '#a62858' }}>
                   <Lock className="w-3 h-3" /> CERRADO
                 </span>
               )}
             </div>
             
-            <p className="text-gray-400 mb-6">
+            <p className="mb-6 text-white">
               {turno === 'abierto' 
                 ? `Turno iniciado el ${new Date(datosTurno?.fechaInicio).toLocaleTimeString()} por ${datosTurno?.usuario?.nombre || 'Admin'}.`
                 : "El sistema está bloqueado para Garzones y Cocina. Abre turno para comenzar a operar."
@@ -112,11 +111,10 @@ function Dashboard() {
           <button
             onClick={handleToggleTurno}
             disabled={loading}
-            className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-transform active:scale-95 ${
-              turno === 'abierto'
-                ? 'bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-900/50'
-                : 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-900/50'
-            }`}
+            className="w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-3 transition-transform active:scale-95 text-white shadow-lg"
+            style={{
+              backgroundColor: turno === 'abierto' ? '#dc2626' : '#F1A321'
+            }}
           >
             {loading ? (
                "Procesando..."
@@ -130,30 +128,30 @@ function Dashboard() {
 
         {/* Tarjeta de Resumen Rápido (Placeholder para futuro) */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700 flex flex-col items-center justify-center text-center">
-             <div className="p-3 bg-indigo-500/20 rounded-full mb-3 text-indigo-400">
+          <div className="p-6 rounded-2xl border-2 flex flex-col items-center justify-center text-center" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', borderColor: '#22C55E' }}>
+             <div className="p-3 rounded-full mb-3" style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)', color: '#22C55E' }}>
                 <DollarSign className="w-8 h-8" />
              </div>
              <h3 className="text-2xl font-bold text-white">$0</h3>
-             <p className="text-sm text-gray-400">Ventas Hoy</p>
+             <p className="text-sm text-white" style={{ opacity: 0.7 }}>Ventas Hoy</p>
           </div>
-          <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700 flex flex-col items-center justify-center text-center">
-             <div className="p-3 bg-orange-500/20 rounded-full mb-3 text-orange-400">
+          <div className="p-6 rounded-2xl border-2 flex flex-col items-center justify-center text-center" style={{ backgroundColor: 'rgba(241, 163, 33, 0.1)', borderColor: '#F1A321' }}>
+             <div className="p-3 rounded-full mb-3" style={{ backgroundColor: 'rgba(241, 163, 33, 0.2)', color: '#F1A321' }}>
                 <ShoppingBag className="w-8 h-8" />
              </div>
              <h3 className="text-2xl font-bold text-white">0</h3>
-             <p className="text-sm text-gray-400">Pedidos Activos</p>
+             <p className="text-sm text-white" style={{ opacity: 0.7 }}>Pedidos Activos</p>
           </div>
         </div>
 
       </div>
 
-      <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-        <div className="flex items-center gap-3 mb-4 text-gray-300">
+      <div className="rounded-xl p-6 border-2" style={{ backgroundColor: 'rgba(200, 200, 200, 0.1)', borderColor: '#e0e0e0' }}>
+        <div className="flex items-center gap-3 mb-4 text-white">
             <Clock className="w-5 h-5" />
             <h3 className="font-semibold">Historial de Turnos Recientes</h3>
         </div>
-        <p className="text-gray-500 text-sm italic">Aquí verás la lista de los últimos cierres de caja (Próximamente en Fase 4).</p>
+        <p className="text-sm italic text-white" style={{ opacity: 0.7 }}>Aquí verás la lista de los últimos cierres de caja (Próximamente en Fase 4).</p>
       </div>
     </div>
   );
