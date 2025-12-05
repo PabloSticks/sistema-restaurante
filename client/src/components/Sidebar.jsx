@@ -25,7 +25,7 @@ function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 flex flex-col h-screen fixed left-0 top-0" style={{ backgroundColor: '#A62858', borderRight: '2px solid #ffffff' }}>
+    <aside className="w-64 flex flex-col h-screen fixed left-0 top-0" style={{ backgroundColor: '#3A2154', borderRight: '2px solid #ffffff' }}>
       {/* 1. Header del Sidebar */}
       <div className="flex flex-col items-center justify-center py-4">
         <img src={logo} alt="Buen Sabor" className="w-24 h-24 mb-2" />
@@ -50,7 +50,7 @@ function Sidebar() {
                   return baseClass + " text-white hover:text-white";
                 }}
                 style={({ isActive }) => ({
-                  backgroundColor: isActive ? '#3a2256' : 'transparent',
+                  backgroundColor: isActive ? '#9B6BA8' : 'transparent',
                 })}
               >
                 <item.icon className="w-5 h-5" />
@@ -64,7 +64,7 @@ function Sidebar() {
       {/* 3. Footer del Sidebar (Perfil + Logout) */}
       <div className="p-4">
         <div className="flex items-center gap-3 mb-4 px-2">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: '#3a2256' }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: '#9B6BA8' }}>
             {user?.nombre?.charAt(0) || "A"}
           </div>
           <div className="flex-1 min-w-0">
@@ -83,7 +83,7 @@ function Sidebar() {
             if (confirmado) logout();
           }}
           className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors text-white"
-          style={{ backgroundColor: '#dc2626' }}
+          style={{ backgroundColor: '#EF4444' }}
         >
           <LogOut className="w-4 h-4" />
           Cerrar Sesión

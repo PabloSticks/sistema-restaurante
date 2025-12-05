@@ -3,7 +3,7 @@ import axios from '../api/axios'; // Importamos nuestra config
 import { useAuthStore } from '../store/authStore'; // Importamos el estado global
 import { useNavigate } from 'react-router-dom'; // Para redireccionar
 import { User, Lock } from 'lucide-react'; // Iconos bonitos
-import backgroundLogin from '../assets/background_login.png'; // Importar imagen
+import backgroundgeneral from '../assets/backgroundgeneral.png'; // Importar imagen
 import logo from '../assets/logopng.png'; // Importar logo
 
 function LoginPage() {
@@ -33,16 +33,16 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-start p-0" style={{
-      backgroundImage: `url(${backgroundLogin})`,
+      backgroundImage: `url(${backgroundgeneral})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundAttachment: 'fixed'
     }}>
-      <div className="p-8 rounded-none shadow-none w-1/3 border-0 h-screen flex flex-col justify-center items-center" style={{backgroundColor: '#A62858'}}>
+      <div className="p-8 rounded-none shadow-none w-1/3 border-0 h-screen flex flex-col justify-center items-center" style={{backgroundColor: '#3A2154'}}>
         
         <div className="mb-8 w-96 text-center">
           <h2 className="text-5xl font-bold text-white">
-            Bienvenido a <span style={{color: '#F3E101'}}>Buen Sabor</span>
+            Bienvenido a <span style={{color: '#F1A321'}}>Buen Sabor</span>
           </h2>
         </div>
 
@@ -96,7 +96,7 @@ function LoginPage() {
         </form>
       </div>
       
-      <div className="w-2/3 h-screen flex items-center justify-center relative" style={{backgroundImage: `url(${backgroundLogin})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
+      <div className="w-2/3 h-screen flex items-center justify-center relative" style={{backgroundImage: `url(${backgroundgeneral})`, backgroundSize: 'cover', backgroundPosition: 'center'}}>
         <div className="absolute inset-0 bg-black opacity-20 pointer-events-none"></div>
         <img src={logo} alt="Logo Buen Sabor" className="w-full h-full object-contain p-20 relative z-10" />
       </div>
