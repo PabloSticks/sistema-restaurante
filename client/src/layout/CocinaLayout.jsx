@@ -7,6 +7,7 @@ import socket from '../utils/socket';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import logo from '../assets/logopng.png';
+import backgroundGeneral from '../assets/backgroundgeneral.png';
 
 function CocinaLayout() {
   const { isAuth, user, logout } = useAuthStore();
@@ -38,7 +39,12 @@ function CocinaLayout() {
   };
 
   return (
-    <div className="h-screen bg-gray-900 flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden" style={{
+      backgroundImage: `url(${backgroundGeneral})`,
+      backgroundSize: '50%',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed'
+    }}>
       <ToastContainer />
       
       {/* Header Cocina */}

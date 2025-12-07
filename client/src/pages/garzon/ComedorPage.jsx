@@ -52,11 +52,11 @@ function ComedorPage() {
   };
 
   return (
-    // 1. SCROLL FIX: h-full y overflow
-    <div className="h-full overflow-y-auto bg-gray-900 p-4">
+    // IMPORTANTE: h-full y overflow-y-auto activan el scroll dentro del layout fijo
+    <div className="h-full overflow-y-auto p-4" style={{ backgroundColor: 'transparent' }}>
       
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3" style={{ color: '#111827' }}>
           <div className="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
             <Store className="w-6 h-6" />
           </div>
@@ -75,43 +75,44 @@ function ComedorPage() {
                 key={mesa.id}
                 onClick={() => handleOcupar(mesa)}
                 disabled={!esLibre}
-                className={`group relative rounded-2xl p-5 border transition-all text-left shadow-lg
+                className={`group relative rounded-2xl p-5 border-2 transition-all text-left shadow-lg
                   ${esLibre 
-                    ? 'bg-gray-800 border-green-500/30 hover:border-green-400 hover:bg-gray-750 cursor-pointer active:scale-[0.98]' 
+                    ? 'bg-white border-green-500/30 hover:border-green-400 hover:shadow-xl cursor-pointer active:scale-[0.98]' 
                     : ''}
                   ${esMia 
-                    ? 'bg-indigo-900/10 border-indigo-500/50 cursor-default' 
+                    ? 'bg-white border-indigo-500/50 hover:shadow-xl cursor-default' 
                     : ''}
                   ${ocupadaPorOtro 
-                    ? 'bg-gray-800/50 border-red-500/10 opacity-60 cursor-not-allowed grayscale-[0.5]' 
+                    ? 'bg-gray-50 border-gray-300/50 opacity-60 cursor-not-allowed' 
                     : ''}
                 `}
               >
                 {/* Cabecera Tarjeta */}
                 <div className="flex justify-between items-start mb-3">
-                  <div className={`p-3 rounded-xl transition-colors ${
-                      esLibre ? 'bg-green-500/20 text-green-400 group-hover:bg-green-500 group-hover:text-white' :
-                      esMia ? 'bg-indigo-500/20 text-indigo-400' :
-                      'bg-red-500/10 text-red-400'
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm transition-colors ${
+                      esLibre ? 'bg-green-500 group-hover:bg-green-600' :
+                      esMia ? 'bg-indigo-500' :
+                      'bg-red-500/50'
                   }`}>
-                    {esLibre ? <Coffee className="w-6 h-6" /> : esMia ? <CheckCircle2 className="w-6 h-6"/> : <Lock className="w-6 h-6"/>}
+                    {esLibre ? <Coffee className="w-5 h-5" /> : esMia ? <CheckCircle2 className="w-5 h-5"/> : <Lock className="w-5 h-5"/>}
                   </div>
 
                   {/* Badge de Estado */}
-                  <span className={`text-[10px] uppercase font-bold px-2 py-1 rounded-full border ${
-                     esLibre ? 'bg-green-500/10 text-green-400 border-green-500/20' :
-                     esMia ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' :
-                     'bg-red-500/10 text-red-500 border-red-500/20'
+                  <span className={`text-xs px-2 py-1 rounded-full border font-bold ${
+                     esLibre ? 'bg-green-100 text-green-800 border-green-300' :
+                     esMia ? 'bg-indigo-100 text-indigo-800 border-indigo-300' :
+                     'bg-red-100 text-red-800 border-red-300'
                   }`}>
                     {esLibre ? 'DISPONIBLE' : esMia ? 'TUYA' : 'OCUPADA'}
                   </span>
                 </div>
 
-                <div className="mt-2">
-                  <h3 className={`text-2xl font-bold ${esLibre ? 'text-white' : 'text-gray-300'}`}>
-                    {mesa.numero}
+                {/* Info */}
+                <div className="mt-3">
+                  <h3 className="text-xl font-bold text-gray-900" style={{ color: '#111827' }}>
+                    Mesa {mesa.numero}
                   </h3>
-                  <div className="flex items-center gap-2 mt-1 text-gray-400 text-sm">
+                  <div className="flex items-center gap-2 mt-1 text-sm" style={{ color: '#111827' }}>
                     <Users className="w-4 h-4" />
                     <span>{mesa.capacidad} Personas</span>
                   </div>
@@ -120,6 +121,11 @@ function ComedorPage() {
                 {/* Decoración Hover (Solo si es libre) */}
                 {esLibre && (
                   <div className="absolute bottom-0 left-0 w-full h-1 bg-green-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-2xl" />
+                )}
+
+                {/* Decoración Hover (Si es mía - azul) */}
+                {esMia && (
+                  <div className="absolute bottom-0 left-0 w-full h-1 bg-indigo-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-2xl" />
                 )}
               </button>
             );

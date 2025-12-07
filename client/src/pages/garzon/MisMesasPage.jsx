@@ -56,10 +56,10 @@ function MisMesasPage() {
 
   return (
     // IMPORTANTE: h-full y overflow-y-auto activan el scroll dentro del layout fijo
-    <div className="h-full overflow-y-auto bg-gray-900 p-4">
+    <div className="h-full overflow-y-auto p-4" style={{ backgroundColor: 'transparent' }}>
       
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-3" style={{ color: '#111827' }}>
           <div className="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
             <Utensils className="w-6 h-6" />
           </div>
@@ -67,12 +67,13 @@ function MisMesasPage() {
         </h2>
         
         {mesas.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-gray-800/30 rounded-3xl border-2 border-dashed border-gray-700">
-            <ClipboardList className="w-16 h-16 text-gray-600 mb-4" />
-            <p className="text-gray-400 text-lg">No estás atendiendo ninguna mesa.</p>
+          <div className="flex flex-col items-center justify-center py-20 rounded-3xl border-2 border-dashed" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', borderColor: 'rgba(0, 0, 0, 0.2)' }}>
+            <ClipboardList className="w-16 h-16 mb-4" style={{ color: '#111827', opacity: 0.5 }} />
+            <p className="text-lg" style={{ color: '#111827' }}>No estás atendiendo ninguna mesa.</p>
             <button 
               onClick={() => navigate('/garzon/comedor')}
-              className="mt-6 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-lg shadow-indigo-900/20"
+              className="mt-6 px-6 py-3 text-white rounded-xl font-bold transition shadow-lg"
+              style={{ backgroundColor: '#9B6BA8' }}
             >
               Ir al Comedor
             </button>
@@ -84,30 +85,39 @@ function MisMesasPage() {
               <div 
                 key={mesa.id} 
                 onClick={() => navigate(`/garzon/mesa/${mesa.id}`)}
-                className="group relative bg-gray-800 rounded-2xl p-5 border border-gray-700 hover:border-indigo-500 hover:bg-gray-750 transition-all cursor-pointer shadow-lg hover:shadow-indigo-500/10 active:scale-[0.98]"
+                className="group relative rounded-2xl p-5 border-2 transition-all text-left shadow-lg hover:shadow-xl cursor-pointer active:scale-[0.98]"
+                style={{ 
+                  backgroundColor: 'white',
+                  borderColor: '#A62858'
+                }}
               >
                 {/* Cabecera Tarjeta */}
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-indigo-500/20 p-3 rounded-xl text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                      <Coffee className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white">{mesa.numero}</h3>
-                      <p className="text-xs text-gray-400">{mesa.capacidad} Personas</p>
-                    </div>
+                <div className="flex justify-between items-start mb-3">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm transition-colors" style={{ backgroundColor: '#A62858' }}>
+                    <Coffee className="w-5 h-5" />
                   </div>
 
                   {/* Botón Liberar (Discreto) */}
                   <button
                     onClick={(e) => handleLiberar(e, mesa)}
-                    className="text-gray-500 hover:text-red-400 p-2 hover:bg-gray-700 rounded-full transition"
+                    className="p-2 rounded-full transition"
+                    style={{ color: '#111827' }}
                     title="Liberar mesa"
                   >
                     <XCircle className="w-5 h-5" />
                   </button>
-                </div>                {/* Estado / Pedidos */}
-                <div className="flex items-center justify-between mt-2 pt-4 border-t border-gray-700/50">
+                </div>
+
+                {/* Info */}
+                <div className="mt-3">
+                  <h3 className="text-xl font-bold" style={{ color: '#111827' }}>Mesa {mesa.numero}</h3>
+                  <div className="flex items-center gap-2 mt-1 text-sm" style={{ color: '#111827' }}>
+                    {`${mesa.capacidad} Personas`}
+                  </div>
+                </div>
+
+                {/* Estado / Pedidos */}
+                <div className="flex items-center justify-between mt-3 pt-3 border-t" style={{ borderColor: 'rgba(0, 0, 0, 0.1)' }}>
                    {(() => {
                       // Lógica corregida para contar ITEMS, no pedidos
                       const pedidoActivo = mesa.pedidos?.[0]; // Tomamos el primer pedido activo
@@ -117,7 +127,7 @@ function MisMesasPage() {
                         return (
                           <div className="flex items-center gap-2">
                              <span className="flex h-2 w-2 rounded-full bg-orange-500 animate-pulse"></span>
-                             <span className="text-sm font-medium text-orange-200">
+                             <span className="text-sm font-medium" style={{ color: '#111827' }}>
                                 {cantidadItems} Productos
                              </span>
                           </div>
@@ -126,7 +136,7 @@ function MisMesasPage() {
                         return (
                           <div className="flex items-center gap-2">
                              <span className="flex h-2 w-2 rounded-full bg-green-500"></span>
-                             <span className="text-sm font-medium text-green-200">
+                             <span className="text-sm font-medium" style={{ color: '#111827' }}>
                                 Mesa abierta
                              </span>
                           </div>
@@ -134,8 +144,11 @@ function MisMesasPage() {
                       }
                    })()}
                    
-                   <ArrowRight className="w-5 h-5 text-gray-600 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-all" style={{ color: '#111827' }} />
                 </div>
+
+                {/* Barra de animación al pasar el cursor */}
+                <div className="absolute bottom-0 left-0 w-full h-1 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-2xl" style={{ backgroundColor: '#A62858' }} />
               </div>
             ))}
           </div>

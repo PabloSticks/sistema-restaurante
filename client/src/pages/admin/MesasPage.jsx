@@ -136,6 +136,11 @@ function MesasPage() {
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
+
+                {/* Barra de animación al pasar el cursor - Respetando colores */}
+                <div className="absolute bottom-0 left-0 w-full h-1 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-b-xl" style={{
+                  backgroundColor: mesa.estado === 'libre' ? '#22C55E' : '#EF4444'
+                }} />
               </div>
             );
           })}
