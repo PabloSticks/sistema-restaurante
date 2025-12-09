@@ -4,9 +4,11 @@ import axios from '../../api/axios';
 import { useAuthStore } from '../../store/authStore';
 import { askConfirmation, showSuccess, showError } from '../../utils/sweetAlert';
 import socket from '../../utils/socket';
-import { ChefHat, ArrowLeft, Minus, Plus, Trash2, CheckCircle, Clock, Loader, BellRing, UtensilsCrossed, Receipt, HandPlatter } from 'lucide-react';
+import { ChefHat, ArrowLeft, Minus, Plus, Trash2, CheckCircle, Clock, Loader, BellRing, UtensilsCrossed, Receipt, HandPlatter, Printer, MessageSquare } from 'lucide-react';
 import PaymentModal from '../../components/PaymentModal'; // <--- Importar Modal Pago
 import backgroundGeneral from '../../assets/backgroundgeneral.png';
+import { generateTicketPDF } from '../../utils/printTicket';
+import Swal from 'sweetalert2';
 
 function MesaPedidoPage() {
   const { id } = useParams();
@@ -38,8 +40,7 @@ function MesaPedidoPage() {
   // ... (agregarAlCarrito y quitarDelCarrito son iguales que antes) ...
   const agregarAlCarrito = (prod) => {
     setCarrito(prev => ({ ...prev, [prod.id]: { ...prod, cantidad: (prev[prod.id]?.cantidad || 0) + 1 } }));
-  };
-  const quitarDelCarrito = (prodId) => {
+  };  const quitarDelCarrito = (prodId) => {
     setCarrito(prev => {
       const actual = prev[prodId];
       if (!actual) return prev;
@@ -48,17 +49,43 @@ function MesaPedidoPage() {
     });
   };
 
+  // Función para agregar comentario a un item del carrito
+  const handleAgregarComentario = async (prodId) => {
+    const item = carrito[prodId];
+    if (!item) return;
+
+    const { value: texto } = await Swal.fire({
+      title: `Nota para ${item.nombre}`,
+      input: 'text',
+      inputValue: item.comentario || '',
+      inputPlaceholder: 'Ej: Sin mayonesa, Bien cocido...',
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      confirmButtonColor: '#A62858'
+    });
+
+    if (texto !== undefined) {
+      setCarrito(prev => ({
+        ...prev,
+        [prodId]: { ...prev[prodId], comentario: texto }
+      }));
+    }
+  };
+
   const handleEnviarCocina = async () => {
     const items = Object.values(carrito);
     if (items.length === 0) return;
     const total = items.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
-    const count = items.reduce((acc, i) => acc + i.cantidad, 0);
-
-    if (await askConfirmation(`¿Marchar ${count} productos?`, `Total: $${formatMoney(total)}`, "Sí, ENVIAR")) {
+    const count = items.reduce((acc, i) => acc + i.cantidad, 0);    if (await askConfirmation(`¿Marchar ${count} productos?`, `Total: $${formatMoney(total)}`, "Sí, ENVIAR")) {
       setLoading(true);
       try {
         await axios.post(`/pedidos/mesa/${id}`, { 
-          items: items.map(i => ({ productoId: i.id, cantidad: i.cantidad, precio: i.precio })) 
+          items: items.map(i => ({ 
+            productoId: i.id, 
+            cantidad: i.cantidad, 
+            precio: i.precio,
+            comentario: i.comentario // <--- ENVIAR ESTO
+          })) 
         }, { headers: { Authorization: `Bearer ${token}` } });
         showSuccess('Comanda enviada');
         setCarrito({});
@@ -147,22 +174,32 @@ function MesaPedidoPage() {
       <div className="w-[40%] flex flex-col h-full shadow-2xl z-10" style={{ backgroundColor: 'white', borderLeft: '1px solid #d0d0d0' }}>
         
         {/* HEADER CUENTA */}
-        <div className="px-4 py-5 shrink-0 flex justify-between items-start" style={{ backgroundColor: 'white', borderBottom: '1px solid rgba(0, 0, 0, 0.1)' }}>
-            <div>
+        <div className="px-4 py-5 shrink-0 flex justify-between items-start" style={{ backgroundColor: 'white', borderBottom: '1px solid rgba(0, 0, 0, 0.1)' }}>            <div>
                 <h1 className="text-xl font-bold" style={{ color: '#111827' }}>Mesa {pedidoActual?.mesaId}</h1>
                 <p className="text-xs" style={{ color: '#666666' }}>Orden #{pedidoActual?.id || '---'}</p>
             </div>
             
-            {/* BOTÓN COBRAR */}
+            {/* BOTONES DE CIERRE */}
             {pedidoActual && pedidoActual.total > 0 && (
-                <button 
-                    onClick={() => setShowPayment(true)}
-                    className="text-white px-4 py-2 rounded-xl font-bold shadow-lg flex items-center gap-2 animate-pulse"
-                    style={{ backgroundColor: '#22C55E' }}
-                >
-                    <Receipt className="w-5 h-5" />
-                    COBRAR
-                </button>
+                <div className="flex items-center gap-2">
+                    {/* Botón Imprimir (Pre-cuenta) */}
+                    <button 
+                        onClick={() => generateTicketPDF(pedidoActual.mesaId, pedidoActual, itemsCarrito)}
+                        className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-2 rounded-xl font-bold shadow-lg flex items-center gap-2 transition"
+                        title="Imprimir Pre-cuenta"
+                    >
+                        <Printer className="w-5 h-5" />
+                    </button>
+
+                    {/* Botón Finalizar / Cobrar */}
+                    <button 
+                        onClick={() => setShowPayment(true)}
+                        className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-xl font-bold shadow-lg shadow-green-900/30 flex items-center gap-2 animate-pulse"
+                    >
+                        <Receipt className="w-5 h-5" />
+                        FINALIZAR MESA
+                    </button>
+                </div>
             )}
         </div>
 
@@ -173,15 +210,30 @@ function MesaPedidoPage() {
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="font-bold flex items-center gap-2 text-sm" style={{ color: '#A62858' }}><Plus className="w-4 h-4" /> POR AGREGAR</h3>
                     <button onClick={() => setCarrito({})} className="text-xs hover:opacity-70 flex items-center gap-1" style={{ color: '#EF4444' }}><Trash2 className="w-3 h-3" /> Cancelar</button>
-                </div>
-                <div className="space-y-2">
+                </div>                <div className="space-y-2">
                     {itemsCarrito.map(item => (
-                        <div key={item.id} className="flex justify-between items-center p-2 rounded-lg border" style={{ backgroundColor: 'white', borderColor: '#A62858' }}>
-                            <div className="flex-1"><p className="font-medium text-sm" style={{ color: '#111827' }}>{item.nombre}</p></div>
-                            <div className="flex items-center gap-3 rounded p-1" style={{ backgroundColor: 'rgba(166, 40, 88, 0.1)' }}>
-                                <button onClick={() => quitarDelCarrito(item.id)} className="p-1" style={{ color: '#EF4444' }}><Minus className="w-4 h-4"/></button>
-                                <span className="font-bold w-6 text-center" style={{ color: '#111827' }}>{item.cantidad}</span>
-                                <button onClick={() => agregarAlCarrito(item)} className="p-1" style={{ color: '#22C55E' }}><Plus className="w-4 h-4"/></button>
+                        <div key={item.id} className="flex flex-col bg-white p-2 rounded-lg border" style={{ borderColor: '#A62858' }}>
+                            <div className="flex justify-between items-center mb-1">
+                                <div className="flex-1">
+                                    <p className="font-medium text-sm" style={{ color: '#111827' }}>{item.nombre}</p>
+                                    {/* Mostrar comentario si existe */}
+                                    {item.comentario && (
+                                        <p className="text-xs italic text-orange-600">Note: {item.comentario}</p>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {/* BOTÓN COMENTARIO */}
+                                    <button onClick={() => handleAgregarComentario(item.id)} className="p-1.5 rounded hover:bg-gray-100 text-gray-500">
+                                        <MessageSquare className="w-4 h-4" />
+                                    </button>
+                                    
+                                    {/* CONTROLES CANTIDAD */}
+                                    <div className="flex items-center gap-3 rounded p-1" style={{ backgroundColor: 'rgba(166, 40, 88, 0.1)' }}>
+                                        <button onClick={() => quitarDelCarrito(item.id)} className="p-1" style={{ color: '#EF4444' }}><Minus className="w-4 h-4"/></button>
+                                        <span className="font-bold w-6 text-center" style={{ color: '#111827' }}>{item.cantidad}</span>
+                                        <button onClick={() => agregarAlCarrito(item)} className="p-1" style={{ color: '#22C55E' }}><Plus className="w-4 h-4"/></button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}

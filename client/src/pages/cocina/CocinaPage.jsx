@@ -58,7 +58,6 @@ function CocinaPage() {
   const pendientes = pedidos.filter(p => p.estado === 'PENDIENTE');
   const cocinando = pedidos.filter(p => p.estado === 'EN_PREPARACION');
   const listos = pedidos.filter(p => p.estado === 'LISTO');
-
   // Componente de Tarjeta (Card)
   const TicketCard = ({ item, action, actionLabel, colorBtn, icon: Icon, bgCard, textColor, btnBgColor, borderColor }) => (
     <div className="rounded-2xl p-4 mb-3 animate-fade-in border-2 shadow-md" style={{ 
@@ -74,11 +73,22 @@ function CocinaPage() {
         </span>
       </div>
       
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold text-white border" style={{ backgroundColor: '#3a2256' }}>
-          {item.cantidad}
+      <div className="mb-4">
+        <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold text-white border" style={{ backgroundColor: '#3a2256', minWidth: '2.5rem' }}>
+            {item.cantidad}
+            </div>
+            <div>
+                <h3 className="text-lg font-bold leading-tight" style={{ color: textColor || '#3a2256' }}>{item.producto.nombre}</h3>
+                
+                {/* --- AQUÍ SE MUESTRA EL COMENTARIO --- */}
+                {item.comentario && (
+                    <div className="mt-1 text-sm font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 border border-red-200 inline-block">
+                        ⚠️ {item.comentario}
+                    </div>
+                )}
+            </div>
         </div>
-        <h3 className="text-lg font-bold leading-tight" style={{ color: textColor || '#3a2256' }}>{item.producto.nombre}</h3>
       </div>
 
       {action && (

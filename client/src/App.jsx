@@ -11,6 +11,7 @@ import Dashboard from './pages/admin/Dashboard';
 import UsersPage from './pages/admin/UsersPage';
 import MesasPage from './pages/admin/MesasPage';
 import ProductosPage from './pages/admin/ProductosPage';
+import HistoryPage from './pages/admin/HistoryPage';
 
 // Pages Garzón
 import ComedorPage from './pages/garzon/ComedorPage';
@@ -33,7 +34,7 @@ function App() {
           <Route path="usuarios" element={<UsersPage />} />
           <Route path="mesas" element={<MesasPage />} />
           <Route path="productos" element={<ProductosPage />} />
-          <Route path="pedidos" element={<div className="text-white p-10">Historial (Fase 4)</div>} />
+          <Route path="pedidos" element={<HistoryPage />} />
         </Route>
 
         {/* 2. ZONA GARZÓN */}

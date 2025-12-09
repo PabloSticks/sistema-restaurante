@@ -56,9 +56,7 @@ export const agregarItems = async (req, res) => {
           total: 0
         }
       });
-    }
-
-    let totalAgregado = 0;
+    }    let totalAgregado = 0;
 
     for (const item of items) {
       await prisma.detallePedido.create({
@@ -67,7 +65,9 @@ export const agregarItems = async (req, res) => {
           productoId: item.productoId,
           cantidad: item.cantidad,
           precioUnit: item.precio,
-          estado: 'PENDIENTE' // Nace pendiente
+          estado: 'PENDIENTE', // Nace pendiente
+          // NUEVO: Guardamos el comentario (o null si no viene)
+          comentario: item.comentario || null
         }
       });
       totalAgregado += (item.precio * item.cantidad);
@@ -125,7 +125,7 @@ export const cambiarEstadoDetalle = async (req, res) => {
   }
 };
 
-// 4. PAGAR CUENTA (SIN CAMBIOS, SOLO REVISIÓN)
+// 4. PAGAR CUENTA 
 export const pagarCuenta = async (req, res) => {
   const { mesaId } = req.params;
   const { totalConPropina } = req.body; 
@@ -141,13 +141,12 @@ export const pagarCuenta = async (req, res) => {
     await prisma.pedido.update({
       where: { id: pedido.id },
       data: {
-        estado: 'PAGADO', // <--- ESTO ES LO QUE CIERRA EL CICLO
+        estado: 'PAGADO', 
         fechaTermino: new Date(),
         total: parseFloat(totalConPropina)
       }
     });
 
-    // Liberar Mesa
     await prisma.mesa.update({
       where: { id: Number(mesaId) },
       data: { estado: 'libre', usuarioId: null }
@@ -155,8 +154,7 @@ export const pagarCuenta = async (req, res) => {
 
     req.io.emit('pedido:actualizado', { mesaId: Number(mesaId) });
     
-    // Emitimos evento para que la vista de "Mis Mesas" y "Comedor" se actualicen
-    req.io.emit('mesas:actualizado'); // (Asegúrate de escuchar esto en el frontend si quieres update real)
+    req.io.emit('mesas:actualizado'); 
 
     res.json({ message: "Cuenta pagada" });
 
@@ -166,3 +164,28 @@ export const pagarCuenta = async (req, res) => {
 };
 
 export const entregarItem = cambiarEstadoDetalle; 
+
+export const getHistorialVentas = async (req, res) => {
+  try {
+    const ventas = await prisma.pedido.findMany({
+      where: {
+        estado: 'PAGADO' 
+      },
+      include: {
+        mesa: true,
+        usuario: true, 
+        turno: true,
+        detalles: {
+          include: { producto: true }
+        }
+      },
+      orderBy: {
+        fechaTermino: 'desc' 
+      },
+      take: 100 
+    });
+    res.json(ventas);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

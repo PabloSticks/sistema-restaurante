@@ -13,6 +13,7 @@ import productoRoutes from './src/routes/producto.routes.js';
 import turnoRoutes from './src/routes/turno.routes.js';
 import pedidoRoutes from './src/routes/pedido.routes.js';
 import cocinaRoutes from './src/routes/cocina.routes.js';
+import statsRoutes from './src/routes/stats.routes.js';
 
 // --- 2. INICIALIZAR APP Y SERVER ---
 const app = express();
@@ -50,6 +51,7 @@ app.use('/api/productos', productoRoutes);
 app.use('/api/turnos', turnoRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 app.use('/api/cocina', cocinaRoutes); 
+app.use('/api/stats', statsRoutes);
 
 
 // --- 6. EVENTOS DE SOCKET ---

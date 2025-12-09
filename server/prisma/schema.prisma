@@ -102,7 +102,8 @@ model DetallePedido {
   cantidad    Int
   precioUnit  Float
   
-  // NUEVO: Estado individual por plato/bebida
+  comentario  String?  
+
   estado      EstadoPedido @default(PENDIENTE) 
 
   pedidoId    Int

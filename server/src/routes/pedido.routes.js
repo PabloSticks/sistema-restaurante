@@ -1,10 +1,12 @@
 import { Router } from 'express';
-import { getPedidoMesa, agregarItems, cambiarEstadoDetalle, pagarCuenta } from '../controllers/pedido.controller.js';
-import { verifyToken } from '../middlewares/auth.middleware.js';
+import { getPedidoMesa, agregarItems, cambiarEstadoDetalle, pagarCuenta, getHistorialVentas } from '../controllers/pedido.controller.js';
+import { verifyToken, verifyAdmin } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
 router.use(verifyToken);
+
+router.get('/historial', verifyAdmin, getHistorialVentas);
 
 router.get('/mesa/:mesaId', getPedidoMesa);
 router.post('/mesa/:mesaId', agregarItems);
