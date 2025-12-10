@@ -95,9 +95,9 @@ function CocinaPage() {
         <button 
           onClick={() => action(item.id)}
           className="w-full py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-lg"
-          style={{ backgroundColor: btnBgColor || '#3a2256', color: btnBgColor ? '#22C55E' : '#F1A321' }}
+          style={{ backgroundColor: btnBgColor || '#3a2256', color: '#000000' }}
         >
-          <Icon className="w-5 h-5" />
+          <Icon className="w-5 h-5" style={{ color: btnBgColor === '#F7C948' ? '#F1993d' : btnBgColor === '#F1993d' ? '#22C55E' : '#22C55E' }} />
           {actionLabel}
         </button>
       )}
@@ -131,6 +131,7 @@ function CocinaPage() {
                     bgCard="rgba(247, 201, 72, 0.15)"
                     textColor="#3a2256"
                     borderColor="#F7C948"
+                    btnBgColor="#F7C948"
                     icon={Flame}
                   />
                 ))
@@ -160,7 +161,7 @@ function CocinaPage() {
                     bgCard="rgba(241, 153, 61, 0.15)"
                     textColor="#3a2256"
                     borderColor="#F1993d"
-                    btnBgColor="#3a2256"
+                    btnBgColor="#F1993d"
                     icon={CheckCircle}
                   />
                 ))
@@ -190,6 +191,7 @@ function CocinaPage() {
                       bgCard="rgba(34, 197, 94, 0.15)"
                       textColor="#3a2256"
                       borderColor="#22C55E"
+                      btnBgColor="#22C55E"
                       icon={BellRing}
                     />
                     <p className="text-center text-xs font-bold -mt-2 mb-4 animate-pulse" style={{ color: '#22C55E' }}>

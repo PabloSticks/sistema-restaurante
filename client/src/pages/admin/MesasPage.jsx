@@ -56,48 +56,13 @@ function MesasPage() {
           </button>
         </div>
 
-        {/* Grid de Mesas con distribución personalizada */}
+        {/* Grid de Mesas con distribución uniforme */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(6, 1fr)',
-          gridTemplateRows: 'repeat(4, minmax(120px, auto))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
           gap: '1rem'
         }}>
           {mesas.map((mesa, index) => {
-            // Distribución personalizada según posición
-            let gridColumn = 'auto';
-            let gridRow = 'auto';
-            
-            // Columna izquierda (índices 0, 1, 2, 3)
-            if (index === 0) { gridColumn = '1 / 2'; gridRow = '1 / 2'; }
-            if (index === 1) { gridColumn = '1 / 2'; gridRow = '2 / 3'; }
-            if (index === 2) { gridColumn = '1 / 2'; gridRow = '3 / 4'; }
-            if (index === 3) { gridColumn = '1 / 2'; gridRow = '4 / 5'; }
-            
-            // Centro (índices 4, 5, 6)
-            if (index === 4) { gridColumn = '3 / 4'; gridRow = '1 / 2'; }
-            if (index === 5) { gridColumn = '3 / 4'; gridRow = '2 / 3'; }
-            if (index === 6) { gridColumn = '3 / 4'; gridRow = '3 / 4'; }
-            
-            // Centro derecha (índice 7)
-            if (index === 7) { gridColumn = '3 / 4'; gridRow = '4 / 5'; }
-            
-            // Derecha (índices 8, 9, 10)
-            if (index === 8) { gridColumn = '5 / 7'; gridRow = '1 / 2'; }
-            if (index === 9) { gridColumn = '5 / 7'; gridRow = '2 / 3'; }
-            if (index === 10) { gridColumn = '5 / 7'; gridRow = '3 / 4'; }
-            
-            // Si hay más mesas, se adaptan al siguiente conjunto
-            if (index > 10) {
-              const posInNext = (index - 11) % 4;
-              const setNum = Math.floor((index - 11) / 4);
-              if (setNum === 0) {
-                if (posInNext === 0) { gridColumn = '1 / 2'; gridRow = '5 / 6'; }
-                if (posInNext === 1) { gridColumn = '3 / 4'; gridRow = '5 / 6'; }
-                if (posInNext === 2) { gridColumn = '5 / 7'; gridRow = '4 / 5'; }
-              }
-            }
-            
             return (
               <div 
                 key={mesa.id} 
@@ -105,8 +70,10 @@ function MesasPage() {
                 style={{ 
                   backgroundColor: 'white',
                   borderColor: '#e0e0e0',
-                  gridColumn,
-                  gridRow
+                  minHeight: '160px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between'
                 }}>
                 
                 {/* Cabecera Tarjeta */}

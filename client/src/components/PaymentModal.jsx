@@ -113,7 +113,7 @@ function PaymentModal({ total, onClose, onConfirm }) {
             className="w-full py-4 rounded-xl font-bold text-lg shadow-lg active:scale-95 transition-all duration-300"
             style={{ backgroundColor: '#22C55E', color: 'white' }}
           >
-            COBRAR {formatMoney(totalFinal)}
+            COBRAR {totalFinal.toLocaleString('es-CL')}
           </button>
 
         </div>
