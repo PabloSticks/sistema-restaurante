@@ -50,13 +50,18 @@ const handleDelete = async (id, nombre) => {
     const colors = {
       'bebida': { bg: 'rgba(27, 179, 200, 0.1)', border: '#1BB3C8', text: '#1BB3C8' },
       'plato_fondo': { bg: 'rgba(182, 70, 42, 0.1)', border: '#B6462A', text: '#B6462A' },
+      'entrada': { bg: 'rgba(34, 197, 94, 0.1)', border: '#22C55E', text: '#22C55E' },
       'postre': { bg: 'rgba(241, 139, 168, 0.1)', border: '#F18BA8', text: '#F18BA8' }
     };
     return colors[categoria] || { bg: 'rgba(200, 200, 200, 0.1)', border: '#cccccc', text: '#333333' };
   };
 
   // Función para obtener color de estación
-  const getStationColor = (estacion) => {
+  const getStationColor = (estacion, categoria) => {
+    // Si es postre, siempre mostrar rosa
+    if (categoria === 'postre') {
+      return { bg: 'rgba(241, 139, 168, 0.1)', border: '#F18BA8', text: '#F18BA8' };
+    }
     const colors = {
       'barra': { bg: 'rgba(108, 58, 168, 0.1)', border: '#6C3AA8', text: '#6C3AA8' },
       'cocina_fria': { bg: 'rgba(20, 95, 122, 0.1)', border: '#145F7A', text: '#145F7A' },
@@ -112,7 +117,7 @@ const handleDelete = async (id, nombre) => {
                     </td>
                     <td className="px-6 py-4">
                       {(() => {
-                        const color = getStationColor(prod.estacion);
+                        const color = getStationColor(prod.estacion, prod.categoria);
                         return (
                           <span className="px-2 py-1 rounded text-xs font-medium border capitalize" style={{
                             backgroundColor: color.bg,

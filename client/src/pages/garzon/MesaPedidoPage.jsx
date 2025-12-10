@@ -60,6 +60,7 @@ function MesaPedidoPage() {
       inputValue: item.comentario || '',
       inputPlaceholder: 'Ej: Sin mayonesa, Bien cocido...',
       showCancelButton: true,
+      reverseButtons: true,
       confirmButtonText: 'Guardar',
       confirmButtonColor: '#A62858'
     });
@@ -76,7 +77,7 @@ function MesaPedidoPage() {
     const items = Object.values(carrito);
     if (items.length === 0) return;
     const total = items.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
-    const count = items.reduce((acc, i) => acc + i.cantidad, 0);    if (await askConfirmation(`¿Marchar ${count} productos?`, `Total: $${formatMoney(total)}`, "Sí, ENVIAR")) {
+    const count = items.reduce((acc, i) => acc + i.cantidad, 0);    if (await askConfirmation(`¿Marchar ${count} productos?`, `Total: ${formatMoney(total)}`, "Sí, ENVIAR")) {
       setLoading(true);
       try {
         await axios.post(`/pedidos/mesa/${id}`, { 
@@ -125,6 +126,31 @@ function MesaPedidoPage() {
 
   const formatMoney = (amount) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(amount);
   
+  // Función para obtener color de categoría
+  const getCategoryColor = (categoria) => {
+    const colors = {
+      'bebida': { bg: 'rgba(27, 179, 200, 0.1)', border: '#1BB3C8', text: '#1BB3C8' },
+      'plato_fondo': { bg: 'rgba(182, 70, 42, 0.1)', border: '#B6462A', text: '#B6462A' },
+      'entrada': { bg: 'rgba(34, 197, 94, 0.1)', border: '#22C55E', text: '#22C55E' },
+      'postre': { bg: 'rgba(241, 139, 168, 0.1)', border: '#F18BA8', text: '#F18BA8' }
+    };
+    return colors[categoria] || { bg: 'rgba(200, 200, 200, 0.1)', border: '#cccccc', text: '#333333' };
+  };
+
+  // Función para obtener color de estación
+  const getStationColor = (estacion, categoria) => {
+    // Si es postre, siempre mostrar rosa
+    if (categoria === 'postre') {
+      return { bg: 'rgba(241, 139, 168, 0.1)', border: '#F18BA8', text: '#F18BA8' };
+    }
+    const colors = {
+      'barra': { bg: 'rgba(108, 58, 168, 0.1)', border: '#6C3AA8', text: '#6C3AA8' },
+      'cocina_fria': { bg: 'rgba(20, 95, 122, 0.1)', border: '#145F7A', text: '#145F7A' },
+      'cocina_caliente': { bg: 'rgba(232, 85, 62, 0.1)', border: '#E8553E', text: '#E8553E' }
+    };
+    return colors[estacion] || { bg: 'rgba(200, 200, 200, 0.1)', border: '#cccccc', text: '#333333' };
+  };
+  
   const productosFiltrados = categoriaActiva === 'todos' ? productos : productos.filter(p => p.categoria === categoriaActiva);
   const itemsCarrito = Object.values(carrito);
   const totalCarrito = itemsCarrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
@@ -159,7 +185,16 @@ function MesaPedidoPage() {
                         <button key={prod.id} onClick={() => agregarAlCarrito(prod)} className={`relative p-4 rounded-xl text-left transition-all border-2 active:scale-95 flex flex-col justify-between min-h-[140px]`} style={{ backgroundColor: enCarrito > 0 ? 'rgba(166, 40, 88, 0.1)' : 'white', borderColor: enCarrito > 0 ? '#A62858' : '#e0e0e0' }}>
                             {enCarrito > 0 && <div className="absolute top-2 right-2 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow-lg" style={{ backgroundColor: '#A62858' }}>{enCarrito}</div>}
                             <div>
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider ${prod.estacion === 'barra' ? 'bg-purple-500/20 text-purple-700' : 'bg-orange-500/20 text-orange-700'}`}>{prod.estacion.replace(/_/g, ' ')}</span>
+                                {(() => {
+                                  const stationColor = getStationColor(prod.estacion, prod.categoria);
+                                  return (
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider" style={{
+                                      backgroundColor: stationColor.bg,
+                                      color: stationColor.text,
+                                      borderColor: stationColor.border
+                                    }}>{prod.estacion.replace(/_/g, ' ')}</span>
+                                  );
+                                })()}
                                 <h3 className="font-bold text-lg leading-tight mt-2" style={{ color: '#111827' }}>{prod.nombre}</h3>
                             </div>
                             <p className="font-bold text-lg mt-2" style={{ color: '#22C55E' }}>{formatMoney(prod.precio)}</p>
@@ -256,13 +291,13 @@ function MesaPedidoPage() {
             ) : (
                 <div className="space-y-3">
                     {pedidoActual.detalles.map((detalle) => {
-                        const esBarra = detalle.producto.estacion === 'barra';
+                        const stationColor = getStationColor(detalle.producto.estacion, detalle.producto.categoria);
                         const estado = detalle.estado;
 
                         return (
-                            <div key={detalle.id} className={`flex justify-between items-center p-3 rounded-xl border-2`} style={{ backgroundColor: estado === 'ENTREGADO' ? 'rgba(0, 0, 0, 0.05)' : 'white', borderColor: esBarra ? '#9B6BA8' : '#F1993d', opacity: estado === 'ENTREGADO' ? 0.6 : 1 }}>
+                            <div key={detalle.id} className={`flex justify-between items-center p-3 rounded-xl border-2`} style={{ backgroundColor: estado === 'ENTREGADO' ? 'rgba(0, 0, 0, 0.05)' : 'white', borderColor: stationColor.border, opacity: estado === 'ENTREGADO' ? 0.6 : 1 }}>
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${esBarra ? 'bg-purple-500/20 text-purple-700' : 'bg-orange-500/20 text-orange-700'}`}>{detalle.cantidad}</div>
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm`} style={{ backgroundColor: stationColor.bg, color: stationColor.text }}>{detalle.cantidad}</div>
                                     <div>
                                         <p className={`font-bold text-sm`} style={{ color: estado === 'ENTREGADO' ? '#999999' : '#111827', textDecoration: estado === 'ENTREGADO' ? 'line-through' : 'none' }}>{detalle.producto.nombre}</p>
                                         <p className="text-xs" style={{ color: '#666666' }}>{formatMoney(detalle.precioUnit)}</p>
@@ -276,14 +311,14 @@ function MesaPedidoPage() {
                                     )}
 
                                     {/* BARRA (Directo a Entregar) */}
-                                    {estado !== 'ENTREGADO' && esBarra && (
+                                    {estado !== 'ENTREGADO' && detalle.producto.estacion === 'barra' && (
                                         <button onClick={() => handleCambiarEstado(detalle.id, 'ENTREGADO', detalle.producto.nombre)} className="text-white px-3 py-2 rounded-lg text-xs font-bold shadow-lg active:scale-95 transition-all flex items-center gap-1" style={{ backgroundColor: '#22C55E' }}>
                                             ENTREGAR
                                         </button>
                                     )}
 
                                     {/* COCINA (Flujo Complejo) */}
-                                    {estado !== 'ENTREGADO' && !esBarra && (
+                                    {estado !== 'ENTREGADO' && detalle.producto.estacion !== 'barra' && (
                                         <>
                                             {estado === 'PENDIENTE' && <div className="flex items-center gap-1 bg-yellow-500/10 px-2 py-1 rounded text-xs border text-xs font-bold" style={{ color: '#F7C948', borderColor: '#F7C948' }}><Clock className="w-3 h-3 animate-pulse" /> En Cola</div>}
                                             {estado === 'EN_PREPARACION' && <div className="flex items-center gap-1 bg-orange-500/10 px-2 py-1 rounded text-xs border font-bold" style={{ color: '#F1993d', borderColor: '#F1993d' }}><ChefHat className="w-3 h-3 animate-bounce" /> Cocinando</div>}
